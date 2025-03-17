@@ -4,7 +4,7 @@ const plcLookup = db.prepare("SELECT id FROM plc_idents WHERE did = ?");
 const zplcLookup = db.prepare("SELECT did FROM plc_idents WHERE id = ?");
 
 export default {
-  async fetch(req, _info) {
+  fetch(req, _info) {
     const pathname = new URL(req.url).pathname;
 
     if (pathname.startsWith("/did:")) {
