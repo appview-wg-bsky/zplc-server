@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "serve": "deno serve -A ./server.ts"
+    "ingest": "deno run -A ./src/ingest.ts",
+    "serve": "deno serve -A ./src/server.ts"
   },
   "imports": {
     "@db/sqlite": "jsr:@db/sqlite@^0.12.0"

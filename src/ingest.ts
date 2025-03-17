@@ -42,5 +42,15 @@ export async function ingest() {
 }
 
 if (import.meta.main) {
-  await ingest();
+  const sleep = (ms: number) => new Promise<void>((r) => setTimeout(() => r(), ms));
+
+  while (true) {
+    const now = Date.now();
+    await ingest();
+    const elapsed = Date.now() - now;
+
+    // rate limit is 500 requests per 5 minutes (300 seconds)
+    const TARGET_SLEEP_TIME = (300 / 500) * 1000;
+    await sleep(Math.max(0, TARGET_SLEEP_TIME - elapsed));
+  }
 }
