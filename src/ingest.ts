@@ -19,7 +19,7 @@ export async function ingest() {
   if (latest) url.searchParams.set("after", latest);
 
   const response = await fetch(url, {
-    headers: { "user-agent": "char-zplc/0.1 (cerulea.blue)" },
+    headers: { "user-agent": "zplc-server/0.1 (github.com/char/zplc-server)" },
   });
   if (response.status !== 200) {
     console.warn(response);
