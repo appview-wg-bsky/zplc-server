@@ -64,6 +64,9 @@
       "integrity": "b41332d93d2cf6a82fe4ac2153b930adf1a859392931e2a19d9fabfb6f154fb3"
     }
   },
+  "remote": {
+    "https://char.lt/esm/pipe.ts": "e40365c4d5032fc28d27712c7421248240d0b78b5a5abcd8d46bff1852d5d615"
+  },
   "workspace": {
     "dependencies": [
       "jsr:@db/sqlite@0.12"

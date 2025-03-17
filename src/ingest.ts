@@ -11,18 +11,12 @@ export interface ExportEntry {
 
 // ok TODO: this but its just reading from the big exports.jsonl i have on the other machine
 
-const insertEntry = db.prepare(`INSERT INTO plc_entries (cid, created_at, entry) VALUES (?, ?, ?)`);
-const insertDid = db.prepare(`INSERT INTO plc_idents (did) VALUES (?)`);
-
 export async function ingest() {
   const url = new URL("https://plc.directory/export");
   url.searchParams.set("count", "1000");
 
-  const latestOp = db
-    .prepare(`SELECT created_at FROM plc_entries ORDER BY id DESC LIMIT 1`)
-    .value<[created_at: string]>();
-
-  if (latestOp) url.searchParams.set("after", latestOp[0]);
+  const latest = db.latestOp();
+  if (latest) url.searchParams.set("after", latest);
 
   const response = await fetch(url, {
     headers: { "user-agent": "char-zplc/0.1 (cerulea.blue)" },
@@ -35,8 +29,7 @@ export async function ingest() {
   const text = await response.text();
   for (const line of new IterLines(text)) {
     const entry = JSON.parse(line) as unknown as ExportEntry;
-    insertEntry.run(entry.cid, entry.createdAt, line);
-    insertDid.run(entry.did);
+    db.ingest(entry.cid, entry.createdAt, entry.did, line);
     console.log(Deno.inspect({ c: entry.createdAt, d: entry.did }, { colors: true, breakLength: Infinity }));
   }
 }
@@ -48,13 +41,12 @@ if (import.meta.main) {
 
   for await (const line of lineStream.values()) {
     const entry = JSON.parse(line) as unknown as ExportEntry;
-    insertEntry.run(entry.cid, entry.createdAt, line);
-    insertDid.run(entry.did);
+    db.ingest(entry.cid, entry.createdAt, entry.did, line);
     console.log(Deno.inspect({ c: entry.createdAt, d: entry.did }, { colors: true, breakLength: Infinity }));
   }
   */
 
-  const sleep = (ms: number) => new Promise<void>((r) => setTimeout(() => r(), ms));
+  const sleep = (ms: number) => new Promise<void>(r => setTimeout(() => r(), ms));
 
   while (true) {
     const now = Date.now();

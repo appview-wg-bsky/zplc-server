@@ -1,37 +1,24 @@
 import { db } from "./db.ts";
 
-const plcLookup = db.prepare("SELECT id FROM plc_idents WHERE did = ?");
-const zplcLookup = db.prepare("SELECT did FROM plc_idents WHERE id = ?");
-
 export default {
   fetch(req, _info) {
     const pathname = new URL(req.url).pathname;
 
     if (pathname.startsWith("/did:")) {
       // resolve did:plc to zplc number
-      const maybeId = plcLookup.value<[id: number]>(pathname.substring(1));
-      if (maybeId) {
-        return new Response(String(maybeId[0]), { headers: { "content-type": "text/plain" } });
-      } else {
-        return new Response("zplc not found", { status: 404, headers: { "content-type": "text/plain" } });
-      }
+      const id = db.didToZplc(pathname.substring(1));
+      return id
+        ? new Response(String(id), { headers: { "content-type": "text/plain" } })
+        : new Response("zplc not found", { status: 404, headers: { "content-type": "text/plain" } });
     } else if (pathname.match(/^\/\d+$/)) {
       // resolve zplc number to did:plc
-      const maybeDid = zplcLookup.value<[did: string]>(Number(pathname.substring(1)));
-      if (maybeDid) {
-        return new Response(maybeDid[0], { headers: { "content-type": "text/plain" } });
-      } else {
-        return new Response("did not found", { status: 404, headers: { "content-type": "text/plain" } });
-      }
+      const did = db.zplcToDid(Number(pathname.substring(1)));
+      return did
+        ? new Response(did, { headers: { "content-type": "text/plain" } })
+        : new Response("did not found", { status: 404, headers: { "content-type": "text/plain" } });
     } else if (pathname === "/latest") {
-      const latest = db
-        .prepare("SELECT created_at FROM plc_entries ORDER BY id DESC LIMIT 1")
-        .value<[createdAt: string]>();
-      if (latest) {
-        return new Response(latest[0], { headers: { "content-type": "text/plain" } });
-      } else {
-        return new Response("", { headers: { "content-type": "text/plain" } });
-      }
+      const latest = db.latestOp();
+      return new Response(latest ?? "", { headers: { "content-type": "text/plain" } });
     } else if (pathname === "/") {
       return new Response(
         [
