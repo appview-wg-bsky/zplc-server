@@ -9,7 +9,8 @@
     "jsr:@std/fmt@0.221": "0.221.0",
     "jsr:@std/fs@0.221": "0.221.0",
     "jsr:@std/path@0.217": "0.217.0",
-    "jsr:@std/path@0.221": "0.221.0"
+    "jsr:@std/path@0.221": "0.221.0",
+    "jsr:@std/streams@1": "1.0.8"
   },
   "jsr": {
     "@db/sqlite@0.12.0": {
@@ -58,6 +59,9 @@
       "dependencies": [
         "jsr:@std/assert@0.221"
       ]
+    },
+    "@std/streams@1.0.8": {
+      "integrity": "b41332d93d2cf6a82fe4ac2153b930adf1a859392931e2a19d9fabfb6f154fb3"
     }
   },
   "workspace": {
