@@ -32,6 +32,14 @@ export default {
       } else {
         return new Response("", { headers: { "content-type": "text/plain" } });
       }
+    } else if (pathname === "/") {
+      return new Response(
+        [
+          "github.com/char/zplc-server",
+          "GET /<zplc> - resolve a zplc id to a did:plc: identifier",
+          "GET /did:plc:<id> - resolve a did:plc: identifier to a zplc id",
+        ].join("\n"),
+      );
     }
 
     return new Response("Not Found", {
