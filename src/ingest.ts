@@ -32,6 +32,7 @@ export async function ingest() {
     db.ingest(entry.cid, entry.createdAt, entry.did, line);
     console.log(Deno.inspect({ c: entry.createdAt, d: entry.did }, { colors: true, breakLength: Infinity }));
   }
+  db.flush();
 }
 
 if (import.meta.main) {
