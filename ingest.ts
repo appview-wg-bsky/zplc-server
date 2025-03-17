@@ -37,7 +37,7 @@ export async function ingest() {
     const entry = JSON.parse(line) as unknown as ExportEntry;
     insertEntry.run(entry.cid, entry.createdAt, line);
     insertDid.run(entry.did);
-    console.log({ c: entry.createdAt, d: entry.did });
+    console.log(Deno.inspect({ c: entry.createdAt, d: entry.did }, { colors: true, breakLength: Infinity }));
   }
 }
 
