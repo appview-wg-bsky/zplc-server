@@ -54,8 +54,8 @@ if (import.meta.main) {
     await ingest();
     const elapsed = Date.now() - now;
 
-    // rate limit is 500 requests per 5 minutes (300 seconds), so let's do half that
-    const TARGET_SLEEP_TIME = (300 / 250) * 1000;
+    // rate limit is 500 requests per 5 minutes (300 seconds), so let's do a bit less
+    const TARGET_SLEEP_TIME = (300 / 400) * 1000;
     await sleep(Math.max(0, TARGET_SLEEP_TIME - elapsed));
   }
 }
