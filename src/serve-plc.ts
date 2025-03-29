@@ -15,7 +15,7 @@ export default {
       const did = pathname.substring(1);
       const entry = statement.value<[entry: string]>(did)?.pipe(it => it[0]);
       const doc: DidDocument | undefined = entry
-        ?.pipe(it => JSON.parse(it)?.operation)
+        ?.pipe(it => JSON.parse(it).operation)
         ?.pipe((op: CompatibleOpOrTombstone) => opToData(did, op))
         ?.pipe(formatDidDoc);
 
