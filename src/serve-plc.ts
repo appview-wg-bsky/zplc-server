@@ -1,11 +1,9 @@
+import "https://char.lt/esm/pipe.ts";
+import { CompatibleOpOrTombstone, DidDocument, formatDidDoc, opToData } from "npm:@did-plc/lib@0.0.4";
 import { db } from "./db.ts";
 
-import { CompatibleOpOrTombstone, DidDocument, formatDidDoc, opToData } from "npm:@did-plc/lib@0.0.4";
-
-const log = db.log;
-if (!log) throw new Error("can't serve plc when ZPLC_NO_RAW_LOG is set");
-
-const statement = log.prepare("SELECT entry FROM plc_entries WHERE did = ? ORDER BY id DESC LIMIT 1");
+const statement = db.log?.prepare("SELECT entry FROM plc_entries WHERE did = ? ORDER BY id DESC LIMIT 1");
+if (!statement) throw new Error("can't serve plc when ZPLC_NO_RAW_LOG is set");
 
 export default {
   fetch(req, _info): Response {
