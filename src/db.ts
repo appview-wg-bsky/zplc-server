@@ -19,16 +19,18 @@ const log = !Deno.env.get("ZPLC_NO_RAW_LOG")?.pipe(it => ["true", "1"].includes(
         id INTEGER PRIMARY KEY NOT NULL,
         entry TEXT NOT NULL,
         cid TEXT NOT NULL UNIQUE ON CONFLICT IGNORE,
+        did TEXT NOT NULL,
         created_at TEXT NOT NULL
       ) STRICT;
       `);
+      db.exec(`CREATE INDEX IF NOT EXISTS idx_plc_entries_did ON plc_entries (did);`);
     })
   : undefined;
 
 const zplcToDid = ids.prepare("SELECT did FROM plc_idents WHERE id = ?");
 const didToZplc = ids.prepare("SELECT id FROM plc_idents WHERE did = ?");
 
-const insertEntry = log?.prepare(`INSERT INTO plc_entries (cid, created_at, entry) VALUES (?, ?, ?)`);
+const insertEntry = log?.prepare(`INSERT INTO plc_entries (cid, did, created_at, entry) VALUES (?, ?, ?, ?)`);
 const insertDid = ids.prepare(`INSERT INTO plc_idents (did) VALUES (?)`);
 
 // TODO: we need to figure out an alternative for when we're running logless.
@@ -48,7 +50,7 @@ export const db = {
   didToZplc: (did: string) => didToZplc.value<[number]>(did)?.pipe(it => it[0]),
   ingest: (cid: string, createdAt: string, did: string, raw: string) => {
     latest = createdAt;
-    insertEntry?.run(cid, createdAt, raw);
+    insertEntry?.run(cid, did, createdAt, raw);
     insertDid.run(did);
   },
   latestOp: latestOp
