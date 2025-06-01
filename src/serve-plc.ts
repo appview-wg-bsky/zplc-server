@@ -7,7 +7,7 @@ if (!statement) throw new Error("can't serve plc when ZPLC_NO_RAW_LOG is set");
 
 export default {
   fetch(req, _info): Response {
-    const pathname = new URL(req.url).pathname;
+    const pathname = decodeURIComponent(new URL(req.url).pathname);
 
     if (pathname.startsWith("/did:")) {
       const did = pathname.substring(1);
